@@ -1,0 +1,37 @@
+exp1:
+Adder4 - 4位并行进位加法器；
+Adder16 - 16位并行进位加法器；
+Adder32 - 32位并行进位加法器；
+ALUCTR - ALU控制逻辑；
+BEXT - 位扩展器；
+CLA4 - 4位并行进位逻辑；
+FA - 1位全加器；
+
+exp2:
+ControlUnit - CPU控制逻辑；
+ControlUnit_ALU - CPU控制逻辑（ALU逻辑部分）；
+ControlUnit_main - CPU控制逻辑（非ALU逻辑部分）；
+DataRAM - 数据存储器；
+Ext - 立即数扩展；
+Ifetch - 取指逻辑；
+InstROM - 指令存储器；
+PC - 程序计数器；
+RegFiles - 寄存器组；
+SEXT - 符号扩展器；
+
+exp3:
+PPCPU - 流水线CPU顶层模块；
+REG_EX_MEM - EX-MEM流水线寄存器；
+REG_ID_EX - ID-EX流水线寄存器；
+REG_IF_ID - IF-ID流水线寄存器；
+REG_MEM_WR - MEM-WR流水线寄存器；
+STAGE_EX - EX流水段封装；
+STAGE_ID - ID流水段封装；
+STAGE_IF - IF流水段封装；
+STAGE_MEM - MEM流水段封装；
+STAGE_WR - WR流水段封装；
+tb_PPCPU - 流水线CPU仿真文件；
+
+exp4:
+DetUnit - 数据冒险检测逻辑（数据前推）；
+DetUnit_load - 数据冒险检测逻辑（lw冒险）；
