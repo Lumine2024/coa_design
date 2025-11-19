@@ -1,4 +1,0 @@
-and $t0, $t1, $t2
-addi $t0, $t0, 70
-slt $t2, $t0, $t1
-bne $zr, $t2, 0
