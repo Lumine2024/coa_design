@@ -20,6 +20,10 @@ module STAGE_WR (
 
 
     // Pass through signals
+    // Select write-back data: memory data or ALU result
+    assign WRout_RegDin = WRin_MemtoReg ? WRin_Dout : WRin_ALUout;
     assign WRout_Rw = WRin_Rw;
+    // Prevent register write on ALU overflow (consistent with exp2/CPU.v behavior)
+    assign WRout_RegWE = WRin_RegWr & (~WRin_Overflow);
 
 endmodule
