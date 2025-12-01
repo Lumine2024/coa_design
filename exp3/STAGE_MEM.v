@@ -29,13 +29,24 @@ module STAGE_MEM (
     output             MEMout_PCSrc            // PC source select for IF stage
 );
 
+    // Data memory instance (synchronous write on negedge, asynchronous read)
+    wire [31:0] mem_dout;
+    DataRAM data_ram (
+        .CLK(Clk),
+        .WE(MEMin_MemWr),
+        .DataIn(MEMin_busB),
+        .Address(MEMin_ALUout),
+        .DataOut(mem_dout)
+    );
 
-
-    // Pass through signals
-    assign MEMout_Overflow  = MEMin_Overflow;
-    assign MEMout_MemtoReg  = MEMin_MemtoReg;
-    assign MEMout_RegWr     = MEMin_RegWr;
-    assign MEMout_Rw        = MEMin_Rw;
-    assign MEMout_ALUout    = MEMin_ALUout;
+    // Pass through signals and compute PC source
+    assign MEMout_Dout       = mem_dout;
+    assign MEMout_ALUout     = MEMin_ALUout;
+    assign MEMout_Btarg_or_Jtarg = MEMin_Jump ? MEMin_Jtarg : MEMin_Btarg;
+    assign MEMout_Rw         = MEMin_Rw;
+    assign MEMout_Overflow   = MEMin_Overflow;
+    assign MEMout_MemtoReg   = MEMin_MemtoReg;
+    assign MEMout_RegWr      = MEMin_RegWr;
+    assign MEMout_PCSrc      = MEMin_Jump | (MEMin_Branch & MEMin_Zero);
 
 endmodule

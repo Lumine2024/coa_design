@@ -15,6 +15,24 @@ module STAGE_IF (
     output     [31:0]  IFout_Inst              // Fetched instruction
 );
 
+    wire pcin;
+    MUX1X2 mux_pcin (
+        .X1(MEM_Btarg_or_Jtarg),
+        .X0(IFout_PC4),
+        .S(MEM_PCSrc),
+        .Y(pcin)
+    );
+    PC pc (
+        .Clk(Clk),
+        .Clrn(Clrn),
+        .PCin(pcin),
+        .PCout(IFout_PC)
+    );
+    assign IFout_PC4 = IFout_PC + 4;
 
+    InstROM instrom (
+        .Addr(IFout_PC),
+        .Inst(IFout_Inst)
+    );
 
 endmodule

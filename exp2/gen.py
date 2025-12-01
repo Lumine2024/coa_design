@@ -1,6 +1,5 @@
 regtable = {}
 regtable["$zr"] = "00000"
-regtable["$0"] = "00000"
 regtable["$at"] = "00001"
 regtable["$v0"] = "00010"
 regtable["$v1"] = "00011"
@@ -32,6 +31,8 @@ regtable["$gp"] = "11100"
 regtable["$sp"] = "11101"
 regtable["$fp"] = "11110"
 regtable["$ra"] = "11111"
+for i in range(32):
+    regtable[f"${i}"] = format(i, '05b')
 
 optable = {}
 optable["add"] = "000000"
@@ -39,6 +40,8 @@ optable["sub"] = "000000"
 optable["and"] = "000000"
 optable["or"] = "000000"
 optable["slt"] = "000000"
+optable["addu"] = "000000"
+optable["subu"] = "000000"
 optable["addi"] = "001000"
 optable["andi"] = "001100"
 optable["ori"] = "001101"
@@ -48,6 +51,7 @@ optable["beq"] = "000100"
 optable["bne"] = "000101"
 optable["j"] = "000010"
 optable["jal"] = "000011"
+optable["addiu"] = "001001"
 
 functable = {}
 functable["add"] = "100000"
@@ -55,6 +59,8 @@ functable["sub"] = "100010"
 functable["and"] = "100100"
 functable["or"] = "100101"
 functable["slt"] = "101010"
+functable["addu"] = "100001"
+functable["subu"] = "100011"
 
 print("`timescale 1ns / 1ps\n\
 \n\

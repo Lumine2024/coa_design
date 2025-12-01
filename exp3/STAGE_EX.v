@@ -39,11 +39,41 @@ module STAGE_EX (
     output             EXout_Jump               // Jump control
 );
 
+    // Immediate extension
+    wire [31:0] EX_ext_immd;
+    Ext ext_inst (
+        .imm16(EXin_immd),
+        .ExtOp(EXin_ExtOp),
+        .Extout(EX_ext_immd)
+    );
 
+    // ALU B input selection
+    wire [31:0] ALU_B;
+    assign ALU_B = EXin_ALUSrc ? EX_ext_immd : EXin_busB;
 
-    // Pass through control signals
+    // ALU instance
+    wire [31:0] ALU_result;
+    wire ALU_overflow, ALU_zero;
+    ALU alu_inst (
+        .A(EXin_busA),
+        .B(ALU_B),
+        .ALUctr(EXin_ALUop),
+        .Result(ALU_result),
+        .Overflow(ALU_overflow),
+        .Z(ALU_zero)
+    );
+
+    // Branch target: PC4 + (sign/zero-extended immediate << 2)
+    wire [31:0] EX_shifted_immd = EX_ext_immd << 2;
+    assign EXout_Btarg = EXin_PC4 + EX_shifted_immd;
+
+    // Pass through and derived signals
     assign EXout_Jtarg    = EXin_Jtarg;
     assign EXout_busB     = EXin_busB;
+    assign EXout_ALUout   = ALU_result;
+    assign EXout_Rw       = EXin_RegDst ? EXin_Rd : EXin_Rt;
+    assign EXout_Zero     = ALU_zero;
+    assign EXout_Overflow = ALU_overflow;
     assign EXout_RegWr    = EXin_RegWr;
     assign EXout_MemtoReg = EXin_MemtoReg;
     assign EXout_MemWr    = EXin_MemWr;

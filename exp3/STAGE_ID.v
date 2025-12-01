@@ -38,8 +38,34 @@ module STAGE_ID (
     wire [4:0]  ID_Rd     = IDin_Inst[15:11];
     wire [15:0] ID_imm16  = IDin_Inst[15:0];
     wire [5:0]  ID_func   = IDin_Inst[5:0];
+    wire [5: 0] id_op = IDin_Inst[31: 26];
+    wire [5: 0] id_rs = IDin_Inst[25: 21];
 
+    ControlUnit cu (
+        .OP(id_op),
+        .func(ID_func),
+        .RegWr(IDout_RegWr),
+        .ALUsrc(IDout_ALUSrc),
+        .RegDst(IDout_RegDst),
+        .MemToReg(IDout_MemtoReg),
+        .MemWr(IDout_MemWr),
+        .Branch(IDout_Branch),
+        .Jump(IDout_Jump),
+        .ExtOp(IDout_ExtOp),
+        .ALUctr(IDout_ALUop)
+    );
+    assign IDout_R_type = id_op == 6'b000000;
 
+    RegFiles regfiles (
+        .CLK(Clk),
+        .busW(WR_RegDin),
+        .WE(WR_RegWE),
+        .Rw(WR_Rw),
+        .Ra(id_rs),
+        .Rb(ID_Rt),
+        .busA(IDout_busA),
+        .busB(IDout_busB)
+    );
 
     // Pass through signals
     assign IDout_PC4   = IDin_PC4;
@@ -47,5 +73,6 @@ module STAGE_ID (
     assign IDout_Rd    = ID_Rd;
     assign IDout_func  = ID_func;
     assign IDout_immd  = ID_imm16;
+    assign IDout_Jtarg = { IDin_PC4[31:28], IDin_Inst[25:0], 2'b00 };
 
 endmodule
