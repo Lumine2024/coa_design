@@ -33,7 +33,7 @@ module STAGE_IF (
 
     // 使用字地址索引 InstROM，保持与 exp2 Ifetch/InstROM 的意图一致
     InstROM instrom (
-        .Addr(IFout_PC[6:2]),
+        .Addr(IFout_PC),
         .Inst(IFout_Inst)
     );
 
