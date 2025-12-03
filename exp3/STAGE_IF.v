@@ -8,7 +8,6 @@
 module STAGE_IF (
     input              Clk,                    // Clock signal
     input              Clrn,                   // Synchronous clear (active low)
-    input              IF_EN,                  // 新增：IF/PC 使能（1=允许更新，0=阻塞）
     input              MEM_PCSrc,              // PC source select from MEM stage
     input      [31:0]  MEM_Btarg_or_Jtarg,     // Branch or jump target address
     output reg [31:0]  IFout_PC,               // Current program counter (reg -> 可复位)
@@ -29,7 +28,6 @@ module STAGE_IF (
     PC pc (
         .Clk(Clk),
         .Clrn(Clrn),
-        .EN(IF_EN),           // 连接使能到 PC
         .PCin(pcin),
         .PCout(pc_wire)
     );
