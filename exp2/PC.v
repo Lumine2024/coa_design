@@ -7,6 +7,7 @@
 module PC (
   input         Clk,   // Clock signal
   input         Clrn,  // Synchronous clear (active low)
+  input         EN,    // Enable signal
   input  [31:0] PCin,  // PC input
   output [31:0] PCout  // PC output
 );
@@ -16,7 +17,7 @@ module PC (
   // Synchronous clear on negative clock edge
   always @(negedge Clk) begin
     if (!Clrn) PC <= 32'h00000000;
-    else PC <= PCin;
+    else if(EN) PC <= PCin;
   end
 
   assign PCout = PC;
