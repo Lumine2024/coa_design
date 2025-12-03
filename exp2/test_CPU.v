@@ -46,9 +46,13 @@ module test_CPU;
 	
 	initial begin
 		// Initialize Inputs
-		Clk = 0;
+		Clk = 1;
 		Clrn = 0;
-		#100;
+		#5;
+		Clk = 0;
+		#5;
+		Clrn = 1;
+		#90;
 		Clrn = 1;
 		for(i = 0; i < 100000; i = i + 1) begin
 			Clk = ~Clk;

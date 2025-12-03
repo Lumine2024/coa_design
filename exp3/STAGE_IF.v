@@ -15,7 +15,8 @@ module STAGE_IF (
     output     [31:0]  IFout_Inst              // Fetched instruction
 );
 
-    wire pcin;
+    // pcin must be 32-bit (was single-bit)
+    wire [31:0] pcin;
     MUX1X2 mux_pcin (
         .X1(MEM_Btarg_or_Jtarg),
         .X0(IFout_PC4),
@@ -30,8 +31,9 @@ module STAGE_IF (
     );
     assign IFout_PC4 = IFout_PC + 4;
 
+    // 使用字地址索引 InstROM，保持与 exp2 Ifetch/InstROM 的意图一致
     InstROM instrom (
-        .Addr(IFout_PC),
+        .Addr(IFout_PC[6:2]),
         .Inst(IFout_Inst)
     );
 
