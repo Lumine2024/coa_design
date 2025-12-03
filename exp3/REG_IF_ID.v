@@ -8,7 +8,6 @@ module REG_IF_ID (
     input [31:0] IF_PC4,              // PC + 4 from IF stage
     input [31:0] IF_PC,               // PC from IF stage
     input [31:0] IF_Inst,             // Instruction from IF stage
-    input EN,                         // Enable signal
     output reg [31:0] ID_PC4,         // PC + 4 to ID stage
     output reg [31:0] ID_PC,          // PC to ID stage
     output reg [31:0] ID_Inst         // Instruction to ID stage
@@ -21,7 +20,7 @@ module REG_IF_ID (
             ID_PC   <= 32'h0;
             ID_Inst <= 32'h0;
         end
-        else if (EN) begin
+        else begin
             ID_PC4  <= IF_PC4;
             ID_PC   <= IF_PC;
             ID_Inst <= IF_Inst;
