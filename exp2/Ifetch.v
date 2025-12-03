@@ -23,9 +23,12 @@ module Ifetch (
   wire [31:0] Addr_Jump; // Addr_Jump-Jump address
   wire [31:0] Addr_NJump; // Addr_NJump-Next instruction address
 
+  wire pcen = 1'b1;
+
   PC U1 (
     .Clk(Clk),
     .Clrn(Clrn),
+    .EN(pcen),
     .PCin(PCin),
     .PCout(PCout)
   );

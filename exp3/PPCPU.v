@@ -139,10 +139,20 @@ module PPCPU (
   // Module Instantiations
   //-------------------------------------------------------------------------
 
+    /*
+    wire lu_hazard;
+    load_hazard dul (
+    params...
+    );
+    wire if_pc_en = ~lu_hazard;
+    */
+
+
   // IF Stage: Instruction Fetch
   STAGE_IF IF_Stage (
       .Clk(Clk),
       .Clrn(Clrn),
+      .IF_EN(IF_EN),                    // connect enable to IF stage (PC.EN)
       .MEM_PCSrc(MEMout_PCSrc),
       .MEM_Btarg_or_Jtarg(MEMout_Btarg_or_Jtarg),
       .IFout_PC(IFout_PC),
@@ -154,6 +164,7 @@ module PPCPU (
   REG_IF_ID IF_ID_Reg (
       .Clk(Clk),
       .Clrn(Clrn),
+      .EN(IF_EN),                        // connect enable to IF/ID register
       .IF_PC4(IFout_PC4),
       .IF_PC(IFout_PC),
       .IF_Inst(IFout_Inst),
@@ -353,6 +364,24 @@ module PPCPU (
       .WRout_Rw(WRout_Rw),
       .WRout_RegWE(WRout_RegWE)
   );
+
+  // -------------------------
+  // Hazard detection (load-use)
+  // Detect when EX stage holds a load (EX_MemtoReg) whose destination EX_Rt
+  // matches the source registers of the instruction in ID stage (ID_Inst).
+  // -------------------------
+  wire [4:0] id_rs = ID_Inst[25:21];
+  wire [4:0] id_rt = ID_Inst[20:16];
+  // EX_MemtoReg and EX_Rt are produced by REG_ID_EX (ID->EX pipeline outputs)
+  wire load_hazard;
+  DetUnit_load dul (
+    .E_MemtoReg(EX_MemtoReg),
+    .Rs(id_rs),
+    .Rt(id_rt),
+    .E_Rt(EX_Rt),
+    .load_use(load_hazard)
+  );
+  wire IF_EN = ~load_hazard; // 1 = allow IF/PC/IF_ID update, 0 = stall
 
   // Output assignments
   assign out_IF_PC = IFout_PC;
