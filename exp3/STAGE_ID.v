@@ -38,14 +38,14 @@ module STAGE_ID (
     wire [4:0]  ID_Rd     = IDin_Inst[15:11];
     wire [15:0] ID_imm16  = IDin_Inst[15:0];
     wire [5:0]  ID_func   = IDin_Inst[5:0];
-    wire [5: 0] id_op = IDin_Inst[31: 26];
-    wire [5: 0] id_rs = IDin_Inst[25: 21];
+    wire [5:0]  id_op     = IDin_Inst[31:26];
+    wire [4:0]  id_rs     = IDin_Inst[25:21];
 
     ControlUnit cu (
         .OP(id_op),
         .func(ID_func),
         .RegWr(IDout_RegWr),
-        .ALUsrc(IDout_ALUSrc),
+        .ALUSrc(IDout_ALUSrc),
         .RegDst(IDout_RegDst),
         .MemToReg(IDout_MemtoReg),
         .MemWr(IDout_MemWr),

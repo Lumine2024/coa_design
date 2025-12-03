@@ -72,7 +72,7 @@ module CPU (
         .Y(alu_B)
     );
 
-    wire dout;
+    wire [31: 0] dout;
     DataRAM dara_ram (
         .CLK(Clk),
         .WE(MemWr),
