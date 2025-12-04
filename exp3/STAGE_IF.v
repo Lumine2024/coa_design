@@ -37,7 +37,7 @@ module STAGE_IF (
     // 使用寄存的 IFout_PC 的字地址作为 InstROM 索引，复位期间地址为 0
     InstROM instrom (
         .Addr(IFout_PC),
-        .Inst(IFout_Inst)
+        .Inst(inst_data)
     );
 
     // 在复位时初始化输出为确定值，时钟上升沿更新为真实值
