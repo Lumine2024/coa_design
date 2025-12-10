@@ -11,6 +11,7 @@ module STAGE_EX (
     input      [31:0]  EXin_Jtarg,             // Jump target from ID/EX register
     input      [31:0]  EXin_busA,              // Register bus A from ID/EX register
     input      [31:0]  EXin_busB,              // Register bus B from ID/EX register
+    input      [4:0]   EXin_Rs,                // Register rs from ID/EX register
     input      [4:0]   EXin_Rt,                // Register rt from ID/EX register
     input      [4:0]   EXin_Rd,                // Register rd from ID/EX register
     input      [5:0]   EXin_func,               // Function code from ID/EX register
@@ -25,6 +26,13 @@ module STAGE_EX (
     input              EXin_ExtOp,             // Extension operation from ID/EX register
     input              EXin_R_type,            // R-type control from ID/EX register
     input      [2:0]   EXin_ALUop,              // ALU operation from ID/EX register
+    // Forwarding inputs from MEM and WR stages
+    input      [31:0]  MEM_ALUout,             // ALU result from MEM stage (for forwarding)
+    input      [4:0]   MEM_Rw,                 // Destination register from MEM stage
+    input              MEM_RegWr,              // Register write enable from MEM stage
+    input      [31:0]  WR_RegDin,              // Write-back data from WR stage (for forwarding)
+    input      [4:0]   WR_Rw,                  // Destination register from WR stage
+    input              WR_RegWr,               // Register write enable from WR stage
     output     [31:0]  EXout_Btarg,             // Branch target address
     output     [31:0]  EXout_Jtarg,             // Jump target address
     output     [31:0]  EXout_busB,              // Register bus B (for memory write)
@@ -47,15 +55,48 @@ module STAGE_EX (
         .Extout(EX_ext_immd)
     );
 
-    // ALU B input selection
+    // Forwarding unit for data hazard detection
+    wire [1:0] ALUSrcA_ctrl, ALUSrcB_ctrl;
+    DetUnit forward_unit (
+        .E_Rs(EXin_Rs),
+        .E_Rt(EXin_Rt),
+        .E_ALUSrc(EXin_ALUSrc),
+        .M_Rw(MEM_Rw),
+        .W_Rw(WR_Rw),
+        .M_RegWr(MEM_RegWr),
+        .W_RegWr(WR_RegWr),
+        .ALUSrcA(ALUSrcA_ctrl),
+        .ALUSrcB(ALUSrcB_ctrl)
+    );
+
+    // Forwarding multiplexer for ALU operand A
+    // 00: Use register file data (EXin_busA)
+    // 01: Forward from MEM stage (MEM_ALUout)
+    // 10: Forward from WR stage (WR_RegDin)
+    wire [31:0] ALU_A;
+    assign ALU_A = (ALUSrcA_ctrl == 2'b01) ? MEM_ALUout :
+                   (ALUSrcA_ctrl == 2'b10) ? WR_RegDin :
+                   EXin_busA;
+
+    // Forwarding multiplexer for ALU operand B (before immediate selection)
+    // 00: Use register file data (EXin_busB)
+    // 01: Forward from MEM stage (MEM_ALUout)
+    // 10: Forward from WR stage (WR_RegDin)
+    // 11: Use immediate value (handled by ALUSrc)
+    wire [31:0] forwarded_busB;
+    assign forwarded_busB = (ALUSrcB_ctrl == 2'b01) ? MEM_ALUout :
+                            (ALUSrcB_ctrl == 2'b10) ? WR_RegDin :
+                            EXin_busB;
+
+    // ALU B input selection (immediate vs forwarded register)
     wire [31:0] ALU_B;
-    assign ALU_B = EXin_ALUSrc ? EX_ext_immd : EXin_busB;
+    assign ALU_B = EXin_ALUSrc ? EX_ext_immd : forwarded_busB;
 
     // ALU instance
     wire [31:0] ALU_result;
     wire ALU_overflow, ALU_zero;
     ALU alu_inst (
-        .A(EXin_busA),
+        .A(ALU_A),
         .B(ALU_B),
         .ALUctr(EXin_ALUop),
         .Result(ALU_result),

@@ -8,6 +8,7 @@
 module STAGE_IF (
     input              Clk,                    // Clock signal
     input              Clrn,                   // Synchronous clear (active low)
+    input              stall,                  // Stall signal (holds PC)
     input              MEM_PCSrc,              // PC source select from MEM stage
     input      [31:0]  MEM_Btarg_or_Jtarg,     // Branch or jump target address
     output reg [31:0]  IFout_PC,               // Current program counter (reg -> 可复位)
@@ -28,6 +29,7 @@ module STAGE_IF (
     PC pc (
         .Clk(Clk),
         .Clrn(Clrn),
+        .stall(stall),
         .PCin(pcin),
         .PCout(pc_wire)
     );
@@ -46,12 +48,13 @@ module STAGE_IF (
             IFout_PC  <= 32'd0;
             IFout_PC4 <= 32'd4;    // PC + 4 在复位后也给出确定值（可视需求调整为 0）
             IFout_Inst<= 32'd0;    // 复位时用 0 作为 NOP/默认指令
-        end else begin
+        end else if (!stall) begin
             // 从 PC 模块读取新的 PC，并从 InstROM 读取对应指令
             IFout_PC  <= pc_wire;
             IFout_PC4 <= pc_wire + 32'd4;
             IFout_Inst<= inst_data;
         end
+        // When stall is asserted, hold the current values (no update)
     end
 
 endmodule
