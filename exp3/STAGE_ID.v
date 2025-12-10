@@ -48,7 +48,7 @@ module STAGE_ID (
         .RegWr(IDout_RegWr),
         .ALUSrc(IDout_ALUSrc),
         .RegDst(IDout_RegDst),
-        .MemToReg(IDout_MemtoReg),
+        .MemtoReg(IDout_MemtoReg),
         .MemWr(IDout_MemWr),
         .Branch(IDout_Branch),
         .Jump(IDout_Jump),
