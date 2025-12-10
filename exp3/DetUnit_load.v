@@ -12,6 +12,9 @@ module DetUnit_load (
     output      load_use    // Load-use hazard flag
 );
 
-    assign load_use = E_MemtoReg && ((E_Rt == Rs) || (E_Rt == Rt));
+    // Detect load-use hazard: load in EX stage feeds ID stage
+    // Don't detect hazard if destination is $0 or if neither source reads it
+    assign load_use = E_MemtoReg && (E_Rt != 5'd0) && 
+                      ((E_Rt == Rs && Rs != 5'd0) || (E_Rt == Rt && Rt != 5'd0));
 
 endmodule
