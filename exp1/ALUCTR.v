@@ -12,10 +12,18 @@ module ALUCTR (
   output       SIGctr  //SIGctr-SIG control
 );
 
+  // Redesigned ALU control mapping:
+  // ALUctr → Operation → OPctr
+  // 000 → AND → 00
+  // 001 → OR → 01
+  // 010 → ADD → 10
+  // 110 → SUB → 10
+  // 111 → SLT → 11
+
   assign SUBctr  = ALUctr[2];
+  assign OPctr[1] = ALUctr[1];
+  assign OPctr[0] = ALUctr[0];
   assign OVctr   = !ALUctr[1] & ALUctr[0];
   assign SIGctr  = ALUctr[0];
-  assign OPctr[1] = ALUctr[2] & ALUctr[1];
-  assign OPctr[0] = !ALUctr[2] & ALUctr[1] & !ALUctr[0];
 
 endmodule

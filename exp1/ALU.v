@@ -47,6 +47,9 @@ module ALU (
 
     assign Overflow = OVctr & OF;
 
+    wire [31: 0] andresult;
+    assign andresult = A & B;
+
     wire [31: 0] orresult;
     assign orresult = A | B;
 
@@ -70,12 +73,11 @@ module ALU (
         .Y(out2)
     );
 
-    wire __ignore_for_mux3__;
     MUX32X4 mux3 (
-        .X3(__ignore_for_mux3__),
-        .X2(out2),
+        .X3(out2),
+        .X2(F),
         .X1(orresult),
-        .X0(F),
+        .X0(andresult),
         .S(OPctr),
         .Y(Result)
     );
