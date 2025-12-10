@@ -79,10 +79,9 @@ module STAGE_EX (
                    EXin_busA;
 
     // Forwarding multiplexer for ALU operand B (before immediate selection)
-    // 00: Use register file data (EXin_busB)
+    // 00: Use register file data (EXin_busB) or don't forward
     // 01: Forward from MEM stage (MEM_ALUout)
     // 10: Forward from WR stage (WR_RegDin)
-    // 11: Use immediate value (handled by ALUSrc)
     wire [31:0] forwarded_busB;
     assign forwarded_busB = (ALUSrcB_ctrl == 2'b01) ? MEM_ALUout :
                             (ALUSrcB_ctrl == 2'b10) ? WR_RegDin :

@@ -33,6 +33,8 @@ module DetUnit (
     assign ALUSrcA = C1A ? 2'b01 : C2A ? 2'b10 : 2'b00;
 
     // Select forwarding path for ALU operand B
-    assign ALUSrcB = E_ALUSrc ? 2'b11 : C1B ? 2'b01 : C2B ? 2'b10 : 2'b00;
+    // When E_ALUSrc is asserted, Rt is not used (immediate is used instead)
+    // So no forwarding is needed for operand B
+    assign ALUSrcB = E_ALUSrc ? 2'b00 : C1B ? 2'b01 : C2B ? 2'b10 : 2'b00;
 
 endmodule
