@@ -18,12 +18,16 @@ module DetUnit (
 );
 
     // Forwarding conditions from memory stage to operand A and B
-    wire C1A = M_RegWr && (M_Rw == E_Rs);
-    wire C1B = M_RegWr && (M_Rw == E_Rt);
+    // Don't forward if destination is $0 (always zero in MIPS)
+    // Don't forward if source is $0 (always reads zero)
+    wire C1A = M_RegWr && (M_Rw != 5'd0) && (E_Rs != 5'd0) && (M_Rw == E_Rs);
+    wire C1B = M_RegWr && (M_Rw != 5'd0) && (E_Rt != 5'd0) && (M_Rw == E_Rt);
 
     // Forwarding conditions from write-back stage to operand A and B
-    wire C2A = W_RegWr && (W_Rw == E_Rs);
-    wire C2B = W_RegWr && (W_Rw == E_Rt);
+    // Don't forward if destination is $0 (always zero in MIPS)
+    // Don't forward if source is $0 (always reads zero)
+    wire C2A = W_RegWr && (W_Rw != 5'd0) && (E_Rs != 5'd0) && (W_Rw == E_Rs);
+    wire C2B = W_RegWr && (W_Rw != 5'd0) && (E_Rt != 5'd0) && (W_Rw == E_Rt);
 
     // Select forwarding path for ALU operand A
     assign ALUSrcA = C1A ? 2'b01 : C2A ? 2'b10 : 2'b00;
