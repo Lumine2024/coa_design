@@ -5,10 +5,12 @@
 module REG_ID_EX (
     input Clk,                                    // Clock signal
     input Clrn,                                   // Synchronous clear (active low)
+    input bubble,                                 // Bubble insertion signal (inserts NOP)
     input [31:0] ID_PC4,                         // PC + 4 from ID stage
     input [31:0] ID_Jtarg,                       // Jump target from ID stage
     input [31:0] ID_busA,                        // Register A data from ID stage
     input [31:0] ID_busB,                        // Register B data from ID stage
+    input [4:0] ID_Rs,                           // Rs register number from ID stage
     input [4:0] ID_Rt,                           // Rt register number from ID stage
     input [4:0] ID_Rd,                           // Rd register number from ID stage
     input [5:0] ID_func,                         // Function code from ID stage
@@ -27,6 +29,7 @@ module REG_ID_EX (
     output reg [31:0] EX_Jtarg,                  // Jump target to EX stage
     output reg [31:0] EX_busA,                   // Register A data to EX stage
     output reg [31:0] EX_busB,                   // Register B data to EX stage
+    output reg [4:0] EX_Rs,                      // Rs register number to EX stage
     output reg [4:0] EX_Rt,                      // Rt register number to EX stage
     output reg [4:0] EX_Rd,                      // Rd register number to EX stage
     output reg [5:0] EX_func,                    // Function code to EX stage
@@ -50,6 +53,7 @@ module REG_ID_EX (
             EX_Jtarg   <= 32'h0;
             EX_busA    <= 32'h0;
             EX_busB    <= 32'h0;
+            EX_Rs      <= 5'h0;
             EX_Rt      <= 5'h0;
             EX_Rd      <= 5'h0;
             EX_func    <= 6'h0;
@@ -65,11 +69,34 @@ module REG_ID_EX (
             EX_ExtOp   <= 1'b0;
             EX_R_type  <= 1'b0;
         end
+        else if (bubble) begin
+            // Insert a bubble (NOP): clear control signals that cause writes
+            EX_PC4     <= ID_PC4;
+            EX_Jtarg   <= ID_Jtarg;
+            EX_busA    <= ID_busA;
+            EX_busB    <= ID_busB;
+            EX_Rs      <= ID_Rs;
+            EX_Rt      <= ID_Rt;
+            EX_Rd      <= ID_Rd;
+            EX_func    <= ID_func;
+            EX_immd    <= ID_immd;
+            EX_ALUop   <= ID_ALUop;
+            EX_RegWr   <= 1'b0;  // Disable register write
+            EX_ALUSrc  <= ID_ALUSrc;
+            EX_RegDst  <= ID_RegDst;
+            EX_MemtoReg <= 1'b0;  // Disable memory-to-register
+            EX_MemWr   <= 1'b0;  // Disable memory write
+            EX_Branch  <= 1'b0;  // Disable branch
+            EX_Jump    <= 1'b0;  // Disable jump
+            EX_ExtOp   <= ID_ExtOp;
+            EX_R_type  <= ID_R_type;
+        end
         else begin
             EX_PC4     <= ID_PC4;
             EX_Jtarg   <= ID_Jtarg;
             EX_busA    <= ID_busA;
             EX_busB    <= ID_busB;
+            EX_Rs      <= ID_Rs;
             EX_Rt      <= ID_Rt;
             EX_Rd      <= ID_Rd;
             EX_func    <= ID_func;
