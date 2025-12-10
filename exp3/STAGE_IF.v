@@ -17,19 +17,24 @@ module STAGE_IF (
 );
 
     // pcin must be 32-bit (was single-bit)
+    // When stalling, feed current PC back to PC module to hold the value
     wire [31:0] pcin;
+    wire [31:0] next_pc;
     MUX32X2 mux_pcin (
         .X1(MEM_Btarg_or_Jtarg),
         .X0(IFout_PC4),
         .S(MEM_PCSrc),
-        .Y(pcin)
+        .Y(next_pc)
     );
+    
+    // Select between next PC and current PC based on stall
+    assign pcin = stall ? IFout_PC : next_pc;
+    
     // 保持原有 PC 模块连接，不改接口
     wire [31:0] pc_wire;
     PC pc (
         .Clk(Clk),
         .Clrn(Clrn),
-        .stall(stall),
         .PCin(pcin),
         .PCout(pc_wire)
     );
