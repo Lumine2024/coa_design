@@ -8,12 +8,13 @@ module CPU (
     input Clk, Clrn,
     output wire [31: 0] PC, Inst, R
 );
-    wire RegWr, ALUSrc, RegDst, MemToReg, MemWr, Branch, Jump, ExtOp, ALU_Z;
+    wire RegWr, ALUSrc, RegDst, MemToReg, MemWr, Branch, nBranch, Jump, ExtOp, ALU_Z;
     Ifetch ifetch (
         .Clk(Clk),
         .Clrn(Clrn),
         .Jump(Jump),
         .Branch(Branch),
+        .nBranch(nBranch),
         .Z(ALU_Z),
         .Inst(Inst),
         .PC(PC)
@@ -40,6 +41,7 @@ module CPU (
         .MemtoReg(MemToReg),
         .MemWr(MemWr),
         .Branch(Branch),
+        .nBranch(nBranch),
         .Jump(Jump),
         .ExtOp(ExtOp),
         .ALUctr(ALUctr)

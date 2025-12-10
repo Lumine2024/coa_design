@@ -13,6 +13,7 @@ module ControlUnit (
   output       MemtoReg, // MemtoReg-select memory to register
   output       MemWr, // MemWr-memory write enable
   output       Branch, // Branch-branch instruction enable
+  output       nBranch, // nBranch-branch on not equal
   output       Jump,  // Jump-jump instruction enable
   output       ExtOp, // ExtOp-select extension operation
   output [2:0] ALUctr // ALUctr-ALU control
@@ -30,6 +31,7 @@ module ControlUnit (
     .MemtoReg(MemtoReg),
     .MemWr(MemWr),
     .Branch(Branch),
+    .nBranch(nBranch),
     .Jump(Jump),
     .ExtOp(ExtOp),
     .ALUop(ALUop),

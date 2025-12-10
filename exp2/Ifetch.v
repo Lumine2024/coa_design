@@ -9,6 +9,7 @@ module Ifetch (
   input        Clrn,   // Clrn-Active-low synchronous clear
   input        Jump,   // Jump-Jump signal
   input        Branch, // Branch-Branch signal
+  input        nBranch, // nBranch-Branch on not equal signal
   input        Z,      // Z-Zero signal
   output [31:0] Inst,  // Inst-Instruction
   output [31:0] PC     // PC-Program Counter
@@ -58,7 +59,7 @@ module Ifetch (
   MUX32X2 U5 (
     .X1(Addr_Beq),
     .X0(PC4),
-    .S(Branch & Z),
+    .S(Branch & (Z ^ nBranch)),
     .Y(Addr_NJump)
   );
   MUX32X2 U6 (

@@ -12,6 +12,7 @@ module ControlUnit_main (
   output       MemtoReg, // MemtoReg-select memory to register
   output       MemWr,  // MemWr-memory write enable
   output       Branch, // Branch-branch instruction enable
+  output       nBranch, // nBranch-branch on not equal
   output       Jump,   // Jump-jump instruction enable
   output       ExtOp,  // ExtOp-select extension operation
   output [2:0] ALUop,  // ALUop-ALU operation for OP
@@ -23,6 +24,7 @@ module ControlUnit_main (
   wire lw    = OP[5] & !OP[4] & !OP[3] & !OP[2] & OP[1] & OP[0];   // lw-OP=6'b100011
   wire sw    = OP[5] & !OP[4] & OP[3] & !OP[2] & OP[1] & OP[0];    // sw-OP=6'b101011
   wire beq   = !OP[5] & !OP[4] & !OP[3] & OP[2] & !OP[1] & !OP[0]; // beq-OP=6'b000100
+  wire bne   = !OP[5] & !OP[4] & !OP[3] & OP[2] & !OP[1] & OP[0];  // bne-OP=6'b000101
   wire jump  = !OP[5] & !OP[4] & !OP[3] & !OP[2] & OP[1] & !OP[0]; // jump-OP=6'b000010
 
   assign RegWr    = R_type | ori | addiu | lw;
@@ -30,12 +32,13 @@ module ControlUnit_main (
   assign RegDst   = R_type;
   assign MemtoReg = lw;
   assign MemWr    = sw;
-  assign Branch   = beq;
+  assign Branch   = beq | bne;
+  assign nBranch  = bne;
   assign Jump     = jump;
   assign ExtOp    = addiu | lw | sw;
   assign ALUop[0] = R_type;
   assign ALUop[1] = ori;
-  assign ALUop[2] = beq;
+  assign ALUop[2] = beq | bne;
   assign R_type   = !OP[5] & !OP[4] & !OP[3] & !OP[2] & !OP[1] & !OP[0];
 
 endmodule
