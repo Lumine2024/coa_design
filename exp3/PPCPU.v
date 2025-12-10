@@ -37,6 +37,7 @@ module PPCPU (
   wire [31:0] IDout_Jtarg;  // Jump target address from ID stage
   wire [31:0] IDout_busA;  // Register file bus A output
   wire [31:0] IDout_busB;  // Register file bus B output
+  wire [ 4:0] IDout_Rs;  // Register rs field
   wire [ 4:0] IDout_Rt;  // Register rt field
   wire [ 4:0] IDout_Rd;  // Register rd field
   wire [ 5:0] IDout_func;  // Function code field
@@ -59,6 +60,7 @@ module PPCPU (
   wire [31:0] EX_Jtarg;  // Jump target passed to EX stage
   wire [31:0] EX_busA;  // Register bus A passed to EX stage
   wire [31:0] EX_busB;  // Register bus B passed to EX stage
+  wire [ 4:0] EX_Rs;  // Register rs passed to EX stage
   wire [ 4:0] EX_Rt;  // Register rt passed to EX stage
   wire [ 4:0] EX_Rd;  // Register rd passed to EX stage
   wire [ 5:0] EX_func;  // Function code passed to EX stage
@@ -136,6 +138,22 @@ module PPCPU (
   wire        WRout_RegWE;  // Register write enable to ID stage
 
   //-------------------------------------------------------------------------
+  // Hazard Detection Signals
+  //-------------------------------------------------------------------------
+  wire load_use_stall;  // Load-use hazard detection signal
+
+  //-------------------------------------------------------------------------
+  // Load-use hazard detection unit
+  //-------------------------------------------------------------------------
+  DetUnit_load load_hazard_detector (
+      .E_MemtoReg(EX_MemtoReg),
+      .Rs(ID_Inst[25:21]),
+      .Rt(ID_Inst[20:16]),
+      .E_Rt(EX_Rt),
+      .load_use(load_use_stall)
+  );
+
+  //-------------------------------------------------------------------------
   // Module Instantiations
   //-------------------------------------------------------------------------
 
@@ -143,6 +161,7 @@ module PPCPU (
   STAGE_IF IF_Stage (
       .Clk(Clk),
       .Clrn(Clrn),
+      .stall(load_use_stall),
       .MEM_PCSrc(MEMout_PCSrc),
       .MEM_Btarg_or_Jtarg(MEMout_Btarg_or_Jtarg),
       .IFout_PC(IFout_PC),
@@ -154,6 +173,7 @@ module PPCPU (
   REG_IF_ID IF_ID_Reg (
       .Clk(Clk),
       .Clrn(Clrn),
+      .stall(load_use_stall),
       .IF_PC4(IFout_PC4),
       .IF_PC(IFout_PC),
       .IF_Inst(IFout_Inst),
@@ -175,6 +195,7 @@ module PPCPU (
       .IDout_Jtarg(IDout_Jtarg),
       .IDout_busA(IDout_busA),
       .IDout_busB(IDout_busB),
+      .IDout_Rs(IDout_Rs),
       .IDout_Rt(IDout_Rt),
       .IDout_Rd(IDout_Rd),
       .IDout_func(IDout_func),
@@ -195,10 +216,12 @@ module PPCPU (
   REG_ID_EX ID_EX_Reg (
       .Clk(Clk),
       .Clrn(Clrn),
+      .bubble(load_use_stall),
       .ID_PC4(IDout_PC4),
       .ID_Jtarg(IDout_Jtarg),
       .ID_busA(IDout_busA),
       .ID_busB(IDout_busB),
+      .ID_Rs(IDout_Rs),
       .ID_Rt(IDout_Rt),
       .ID_Rd(IDout_Rd),
       .ID_func(IDout_func),
@@ -215,6 +238,7 @@ module PPCPU (
       .ID_R_type(IDout_R_type),
       .EX_PC4(EX_PC4),
       .EX_Jtarg(EX_Jtarg),
+      .EX_Rs(EX_Rs),
       .EX_Rt(EX_Rt),
       .EX_Rd(EX_Rd),
       .EX_func(EX_func),
@@ -240,6 +264,7 @@ module PPCPU (
       .EXin_Jtarg(EX_Jtarg),
       .EXin_busA(EX_busA),
       .EXin_busB(EX_busB),
+      .EXin_Rs(EX_Rs),
       .EXin_Rt(EX_Rt),
       .EXin_Rd(EX_Rd),
       .EXin_func(EX_func),
@@ -254,6 +279,12 @@ module PPCPU (
       .EXin_ExtOp(EX_ExtOp),
       .EXin_R_type(EX_R_type),
       .EXin_ALUop(EX_ALUop),
+      .MEM_ALUout(MEM_ALUout),
+      .MEM_Rw(MEM_Rw),
+      .MEM_RegWr(MEM_RegWr),
+      .WR_RegDin(WRout_RegDin),
+      .WR_Rw(WRout_Rw),
+      .WR_RegWr(WRout_RegWE),
       .EXout_Btarg(EXout_Btarg),
       .EXout_Jtarg(EXout_Jtarg),
       .EXout_busB(EXout_busB),

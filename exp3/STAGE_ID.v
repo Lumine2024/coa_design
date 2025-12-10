@@ -17,6 +17,7 @@ module STAGE_ID (
     output     [31:0]  IDout_Jtarg,            // Jump target address
     output     [31:0]  IDout_busA,             // Register file bus A output
     output     [31:0]  IDout_busB,             // Register file bus B output
+    output     [4:0]   IDout_Rs,               // Register rs field
     output     [4:0]   IDout_Rt,               // Register rt field
     output     [4:0]   IDout_Rd,               // Register rd field
     output     [5:0]   IDout_func,             // Function code field
@@ -69,6 +70,7 @@ module STAGE_ID (
 
     // Pass through signals
     assign IDout_PC4   = IDin_PC4;
+    assign IDout_Rs    = id_rs;
     assign IDout_Rt    = ID_Rt;
     assign IDout_Rd    = ID_Rd;
     assign IDout_func  = ID_func;
