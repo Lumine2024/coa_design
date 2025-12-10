@@ -37,7 +37,7 @@ module CPU (
         .RegWr(RegWr),
         .ALUSrc(ALUSrc),
         .RegDst(RegDst),
-        .MemToReg(MemToReg),
+        .MemtoReg(MemToReg),
         .MemWr(MemWr),
         .Branch(Branch),
         .Jump(Jump),
@@ -110,3 +110,6 @@ module CPU (
         .busB(busB)
     );
 endmodule
+
+// ERROR:NgdBuild:605 - logical root block 'Tester_ALU' with type 'Tester_ALU' is
+// unexpanded. Symbol 'Tester_ALU' is not supported in target 'artix7'.

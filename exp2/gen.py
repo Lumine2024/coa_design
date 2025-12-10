@@ -83,7 +83,8 @@ module InstROM (\n\
 
 try:
     for i in range(100000): # maximum 100000 instructions
-        instruction = input().split()
+        inst = input()
+        instruction = inst.split()
         if len(instruction) == 0: continue
         for j in range(len(instruction)):
             if instruction[j].endswith(','):
@@ -127,7 +128,7 @@ try:
                     offset_bin = format(offset, '016b')
                 
                 result = result + rs + rt + offset_bin
-        print(f"    InstROM[{i}] = 32'b{result};")
+        print(f"    InstROM[{i}] = 32'b{result};             // {inst}")
 except EOFError:
     pass
 
