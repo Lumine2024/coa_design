@@ -73,11 +73,16 @@ module ALU (
         .Y(out2)
     );
 
+    // Final result selection based on OPctr:
+    // OPctr=00: AND operation (A & B)
+    // OPctr=01: OR operation (A | B)
+    // OPctr=10: ADD/SUB operation (adder result)
+    // OPctr=11: SLT operation (set less than)
     MUX32X4 mux3 (
-        .X3(out2),
-        .X2(F),
-        .X1(orresult),
-        .X0(andresult),
+        .X3(out2),       // SLT result (OPctr=11)
+        .X2(F),          // Adder result for ADD/SUB (OPctr=10)
+        .X1(orresult),   // OR result (OPctr=01)
+        .X0(andresult),  // AND result (OPctr=00)
         .S(OPctr),
         .Y(Result)
     );

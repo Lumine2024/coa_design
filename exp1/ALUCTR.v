@@ -20,10 +20,10 @@ module ALUCTR (
   // 110 → SUB → 10
   // 111 → SLT → 11
 
-  assign SUBctr  = ALUctr[2];
-  assign OPctr[1] = ALUctr[1];
-  assign OPctr[0] = ALUctr[0];
-  assign OVctr   = !ALUctr[1] & ALUctr[0];
-  assign SIGctr  = ALUctr[0];
+  assign SUBctr  = ALUctr[2];  // 1 for SUB/SLT
+  assign OPctr[1] = ALUctr[1]; // Maps lower 2 bits directly
+  assign OPctr[0] = ALUctr[0]; // Maps lower 2 bits directly
+  assign OVctr   = !ALUctr[1] & ALUctr[0]; // Overflow check for ORI (001)
+  assign SIGctr  = ALUctr[0];              // Sign control for SLT
 
 endmodule
