@@ -18,7 +18,7 @@ module RegFiles (
   reg [31:0] RegFiles[31:0]; // Register file
 
   always @(negedge CLK) begin
-    if (WE) RegFiles[Rw] <= busW; // Write data to register
+    if (WE && Rw != 5'b00000) RegFiles[Rw] <= busW; // Write data to register
   end
 
   assign busA = RegFiles[Ra];
@@ -26,7 +26,7 @@ module RegFiles (
 
   integer i;
   initial begin
-    for (i = 0; i < 32; i = i + 1) RegFiles[i] = i;
+    for (i = 0; i < 32; i = i + 1) RegFiles[i] = 0;
   end
 
 endmodule
