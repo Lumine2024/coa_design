@@ -109,7 +109,7 @@ module STAGE_EX (
 
     // Pass through and derived signals
     assign EXout_Jtarg    = EXin_Jtarg;
-    assign EXout_busB     = EXin_busB;
+    assign EXout_busB     = forwarded_busB;  // Use forwarded value for store operations
     assign EXout_ALUout   = ALU_result;
     assign EXout_Rw       = EXin_RegDst ? EXin_Rd : EXin_Rt;
     assign EXout_Zero     = ALU_zero;
