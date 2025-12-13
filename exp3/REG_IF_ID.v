@@ -6,6 +6,7 @@ module REG_IF_ID (
     input Clk,                        // Clock signal
     input Clrn,                       // Synchronous clear (active low)
     input stall,                      // Stall signal (holds register values)
+    input flush,                      // Flush signal (inserts bubble/NOP)
     input [31:0] IF_PC4,              // PC + 4 from IF stage
     input [31:0] IF_PC,               // PC from IF stage
     input [31:0] IF_Inst,             // Instruction from IF stage
@@ -17,6 +18,12 @@ module REG_IF_ID (
     // Asynchronous reset and synchronous update on negative edge of clock
     always @(negedge Clk) begin
         if (!Clrn) begin
+            ID_PC4  <= 32'h0;
+            ID_PC   <= 32'h0;
+            ID_Inst <= 32'h0;
+        end
+        else if (flush) begin
+            // Flush: Insert NOP (all zeros) to handle control hazard
             ID_PC4  <= 32'h0;
             ID_PC   <= 32'h0;
             ID_Inst <= 32'h0;

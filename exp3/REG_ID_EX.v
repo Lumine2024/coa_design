@@ -6,6 +6,7 @@ module REG_ID_EX (
     input Clk,                                    // Clock signal
     input Clrn,                                   // Synchronous clear (active low)
     input bubble,                                 // Bubble insertion signal (inserts NOP)
+    input flush,                                  // Flush signal (inserts NOP for control hazard)
     input [31:0] ID_PC4,                         // PC + 4 from ID stage
     input [31:0] ID_Jtarg,                       // Jump target from ID stage
     input [31:0] ID_busA,                        // Register A data from ID stage
@@ -69,8 +70,9 @@ module REG_ID_EX (
             EX_ExtOp   <= 1'b0;
             EX_R_type  <= 1'b0;
         end
-        else if (bubble) begin
+        else if (flush || bubble) begin
             // Insert a bubble (NOP): clear control signals that cause writes
+            // flush takes priority over bubble for control hazards
             EX_PC4     <= ID_PC4;
             EX_Jtarg   <= ID_Jtarg;
             EX_busA    <= ID_busA;
