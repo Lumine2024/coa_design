@@ -174,6 +174,7 @@ module PPCPU (
       .Clk(Clk),
       .Clrn(Clrn),
       .stall(load_use_stall),
+      .MEM_PCSrc(MEMout_PCSrc),
       .IF_PC4(IFout_PC4),
       .IF_PC(IFout_PC),
       .IF_Inst(IFout_Inst),
@@ -217,6 +218,7 @@ module PPCPU (
       .Clk(Clk),
       .Clrn(Clrn),
       .bubble(load_use_stall),
+      .MEM_PCSrc(MEMout_PCSrc),
       .ID_PC4(IDout_PC4),
       .ID_Jtarg(IDout_Jtarg),
       .ID_busA(IDout_busA),
@@ -303,6 +305,7 @@ module PPCPU (
   REG_EX_MEM EX_MEM_Reg (
       .Clk(Clk),
       .Clrn(Clrn),
+      .MEM_PCSrc(MEMout_PCSrc),
       .EX_Btarg(EXout_Btarg),
       .EX_Jtarg(EXout_Jtarg),
       .EX_busB(EXout_busB),

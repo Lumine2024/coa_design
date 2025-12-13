@@ -5,6 +5,7 @@
 module REG_EX_MEM (
     input Clk,                          // Clock signal
     input Clrn,                         // Synchronous clear (active low)
+    input MEM_PCSrc,                    // Branch/Jump taken signal from MEM stage
     input [31:0] EX_Btarg,              // Branch target from EX stage
     input [31:0] EX_Jtarg,              // Jump target from EX stage
     input [31:0] EX_busB,               // Register B data from EX stage
@@ -33,7 +34,8 @@ module REG_EX_MEM (
 
     // Asynchronous reset and synchronous update on negative edge of clock
     always @(negedge Clk) begin
-        if (!Clrn) begin
+        if (!Clrn || MEM_PCSrc) begin
+            // Reset or flush due to control hazard - clear all signals
             MEM_Btarg   <= 32'h0;
             MEM_Jtarg   <= 32'h0;
             MEM_busB    <= 32'h0;
