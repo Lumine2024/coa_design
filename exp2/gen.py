@@ -128,7 +128,7 @@ try:
                     offset_bin = format(offset, '016b')
                 
                 result = result + rs + rt + offset_bin
-        print(f"    InstROM[{i}] = 32'b{result};             // {inst}")
+        print(f"    InstROM[{i}]{' ' * (3 - len(str(i)))} = 32'b{result};             // {inst}")
 except EOFError:
     pass
 
