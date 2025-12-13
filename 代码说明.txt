@@ -35,3 +35,4 @@ tb_PPCPU - 流水线CPU仿真文件；
 exp4:
 DetUnit - 数据冒险检测逻辑（数据前推）；
 DetUnit_load - 数据冒险检测逻辑（lw冒险）；
+DetUnit_control - 控制冒险检测逻辑（分支/跳转冒险）；
