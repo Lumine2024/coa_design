@@ -5,6 +5,7 @@
 module REG_EX_MEM (
     input Clk,                          // Clock signal
     input Clrn,                         // Synchronous clear (active low)
+    input flush,                        // Flush signal (inserts NOP for control hazard)
     input [31:0] EX_Btarg,              // Branch target from EX stage
     input [31:0] EX_Jtarg,              // Jump target from EX stage
     input [31:0] EX_busB,               // Register B data from EX stage
@@ -46,6 +47,21 @@ module REG_EX_MEM (
             MEM_MemWr   <= 1'b0;
             MEM_Branch  <= 1'b0;
             MEM_Jump    <= 1'b0;
+        end
+        else if (flush) begin
+            // Flush: Insert NOP, clear control signals
+            MEM_Btarg   <= EX_Btarg;
+            MEM_Jtarg   <= EX_Jtarg;
+            MEM_busB    <= EX_busB;
+            MEM_ALUout  <= EX_ALUout;
+            MEM_Rw      <= EX_Rw;
+            MEM_Zero    <= EX_Zero;
+            MEM_Overflow <= EX_Overflow;
+            MEM_RegWr   <= 1'b0;  // Disable register write
+            MEM_MemtoReg <= 1'b0;  // Disable memory-to-register
+            MEM_MemWr   <= 1'b0;  // Disable memory write
+            MEM_Branch  <= 1'b0;  // Disable branch
+            MEM_Jump    <= 1'b0;  // Disable jump
         end
         else begin
             MEM_Btarg   <= EX_Btarg;
