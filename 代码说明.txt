@@ -35,3 +35,4 @@ tb_PPCPU - 流水线CPU仿真文件；
 exp4:
 DetUnit - 数据冒险检测逻辑（数据前推）；
 DetUnit_load - 数据冒险检测逻辑（lw冒险）；
+注：控制冒险通过在流水线寄存器中直接使用MEM_PCSrc信号实现，无需单独模块；
