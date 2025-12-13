@@ -70,7 +70,7 @@ module ALU (
         .Y(out2)
     );
 
-    wire __ignore_for_mux3__;
+    wire [31: 0] __ignore_for_mux3__;
     MUX32X4 mux3 (
         .X3(__ignore_for_mux3__),
         .X2(out2),
