@@ -141,7 +141,6 @@ module PPCPU (
   // Hazard Detection Signals
   //-------------------------------------------------------------------------
   wire load_use_stall;  // Load-use hazard detection signal
-  wire control_hazard_flush;  // Control hazard flush signal
 
   //-------------------------------------------------------------------------
   // Load-use hazard detection unit
@@ -152,14 +151,6 @@ module PPCPU (
       .Rt(ID_Inst[20:16]),
       .E_Rt(EX_Rt),
       .load_use(load_use_stall)
-  );
-
-  //-------------------------------------------------------------------------
-  // Control hazard detection unit
-  //-------------------------------------------------------------------------
-  DetUnit_control control_hazard_detector (
-      .PCSrc(MEMout_PCSrc),
-      .flush(control_hazard_flush)
   );
 
   //-------------------------------------------------------------------------
@@ -183,7 +174,7 @@ module PPCPU (
       .Clk(Clk),
       .Clrn(Clrn),
       .stall(load_use_stall),
-      .flush(control_hazard_flush),
+      .MEM_PCSrc(MEMout_PCSrc),
       .IF_PC4(IFout_PC4),
       .IF_PC(IFout_PC),
       .IF_Inst(IFout_Inst),
@@ -227,7 +218,7 @@ module PPCPU (
       .Clk(Clk),
       .Clrn(Clrn),
       .bubble(load_use_stall),
-      .flush(control_hazard_flush),
+      .MEM_PCSrc(MEMout_PCSrc),
       .ID_PC4(IDout_PC4),
       .ID_Jtarg(IDout_Jtarg),
       .ID_busA(IDout_busA),
@@ -314,7 +305,7 @@ module PPCPU (
   REG_EX_MEM EX_MEM_Reg (
       .Clk(Clk),
       .Clrn(Clrn),
-      .flush(control_hazard_flush),
+      .MEM_PCSrc(MEMout_PCSrc),
       .EX_Btarg(EXout_Btarg),
       .EX_Jtarg(EXout_Jtarg),
       .EX_busB(EXout_busB),
