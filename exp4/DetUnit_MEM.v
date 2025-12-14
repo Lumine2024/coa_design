@@ -19,6 +19,6 @@ module DetUnit_MEM (
     // 2. WB stage is writing to a register (W_RegWr = 1)
     // 3. The register being written in WB matches the data source in MEM (W_Rw == M_Rt)
     // 4. Not writing to register $0 (which is always 0)
-    assign forward_busB = M_MemWr && W_RegWr && (W_Rw == M_Rt) && (W_Rw != 5'b0);
+    assign forward_busB = M_MemWr && W_RegWr && (W_Rw == M_Rt) && (W_Rw != 5'd0);
 
 endmodule

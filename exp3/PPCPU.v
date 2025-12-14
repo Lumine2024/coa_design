@@ -312,7 +312,7 @@ module PPCPU (
       .EX_busB(EXout_busB),
       .EX_ALUout(EXout_ALUout),
       .EX_Rw(EXout_Rw),
-      .EX_Rt(EX_Rt),  // Pass Rt for sw forwarding detection
+      .EX_Rt(EX_Rt),  // Pass Rt to MEM stage for store instruction forwarding detection
       .EX_Zero(EXout_Zero),
       .EX_Overflow(EXout_Overflow),
       .EX_RegWr(EXout_RegWr),
@@ -325,7 +325,7 @@ module PPCPU (
       .MEM_busB(MEM_busB),
       .MEM_ALUout(MEM_ALUout),
       .MEM_Rw(MEM_Rw),
-      .MEM_Rt(MEM_Rt),  // Receive Rt for sw forwarding detection
+      .MEM_Rt(MEM_Rt),  // Receive Rt from EX stage for store instruction forwarding detection
       .MEM_Zero(MEM_Zero),
       .MEM_Overflow(MEM_Overflow),
       .MEM_RegWr(MEM_RegWr),
@@ -343,7 +343,7 @@ module PPCPU (
       .MEMin_busB(MEM_busB),
       .MEMin_ALUout(MEM_ALUout),
       .MEMin_Rw(MEM_Rw),
-      .MEMin_Rt(MEM_Rt),  // Pass Rt for sw forwarding detection
+      .MEMin_Rt(MEM_Rt),  // Pass Rt to MEM stage for store instruction forwarding detection
       .MEMin_Zero(MEM_Zero),
       .MEMin_Overflow(MEM_Overflow),
       .MEMin_RegWr(MEM_RegWr),
