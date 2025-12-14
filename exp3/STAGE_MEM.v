@@ -12,6 +12,7 @@ module STAGE_MEM (
     input      [31:0]  MEMin_busB,             // Register bus B from EX/MEM register
     input      [31:0]  MEMin_ALUout,           // ALU result from EX/MEM register
     input      [4:0]   MEMin_Rw,               // Register write address from EX/MEM register
+    input      [4:0]   MEMin_Rt,               // Source register Rt from EX/MEM register (for sw forwarding)
     input              MEMin_Zero,              // ALU zero flag from EX/MEM register
     input              MEMin_Overflow,         // ALU overflow flag from EX/MEM register
     input              MEMin_RegWr,            // Register write enable from EX/MEM register
@@ -19,6 +20,10 @@ module STAGE_MEM (
     input              MEMin_MemWr,            // Memory write enable from EX/MEM register
     input              MEMin_Branch,           // Branch control from EX/MEM register
     input              MEMin_Jump,              // Jump control from EX/MEM register
+    // Forwarding inputs from WR stage
+    input      [31:0]  WR_RegDin,              // Write-back data from WR stage (for forwarding)
+    input      [4:0]   WR_Rw,                  // Destination register from WR stage
+    input              WR_RegWr,               // Register write enable from WR stage
     output     [31:0]  MEMout_Dout,            // Data memory output
     output     [31:0]  MEMout_ALUout,          // ALU result passed to WR stage
     output     [31:0]  MEMout_Btarg_or_Jtarg,  // Branch or jump target for IF stage
@@ -29,12 +34,26 @@ module STAGE_MEM (
     output             MEMout_PCSrc            // PC source select for IF stage
 );
 
+    // MEM stage forwarding detection for store instructions
+    wire mem_forward_busB;
+    DetUnit_MEM det_mem (
+        .M_Rt(MEMin_Rt),
+        .W_Rw(WR_Rw),
+        .W_RegWr(WR_RegWr),
+        .M_MemWr(MEMin_MemWr),
+        .forward_busB(mem_forward_busB)
+    );
+
+    // Select data to write to memory: forwarded data from WB or original busB
+    wire [31:0] DataIn_forward;
+    assign DataIn_forward = mem_forward_busB ? WR_RegDin : MEMin_busB;
+
     // Data memory instance (synchronous write on negedge, asynchronous read)
     wire [31:0] mem_dout;
     DataRAM data_ram (
         .CLK(Clk),
         .WE(MEMin_MemWr),
-        .DataIn(MEMin_busB),
+        .DataIn(DataIn_forward),  // Use forwarded data if needed
         .Address(MEMin_ALUout),
         .DataOut(mem_dout)
     );
