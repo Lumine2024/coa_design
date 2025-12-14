@@ -40,6 +40,7 @@ optable["sub"] = "000000"
 optable["and"] = "000000"
 optable["or"] = "000000"
 optable["slt"] = "000000"
+optable["sltu"] = "000000"
 optable["addu"] = "000000"
 optable["subu"] = "000000"
 optable["addi"] = "001000"
@@ -59,6 +60,7 @@ functable["sub"] = "100010"
 functable["and"] = "100100"
 functable["or"] = "100101"
 functable["slt"] = "101010"
+functable["sltu"] = "101011"
 functable["addu"] = "100001"
 functable["subu"] = "100011"
 
@@ -111,15 +113,15 @@ try:
                 if instruction[0] in ["lw", "sw"]: # lw and sw format: rt, offset(rs)
                     # Parse offset(rs) format
                     offset_rs = instruction[2].split('(')
-                    offset = int(offset_rs[0])
+                    offset = int(offset_rs[0], 0)
                     rs = regtable[offset_rs[1].replace(')', '')]
                 elif instruction[0] in ["beq", "bne"]: # beq and bne format: rs, rt, offset
                     rs = regtable[instruction[1]]
                     rt = regtable[instruction[2]]
-                    offset = int(instruction[3])
+                    offset = int(instruction[3], 0)
                 else: # addi, andi, ori format: rt, rs, immediate
                     rs = regtable[instruction[2]]
-                    offset = int(instruction[3])
+                    offset = int(instruction[3], 0)
                 
                 # Convert offset to 16-bit binary (two's complement for negative)
                 if offset < 0:
