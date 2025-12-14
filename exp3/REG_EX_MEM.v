@@ -11,6 +11,7 @@ module REG_EX_MEM (
     input [31:0] EX_busB,               // Register B data from EX stage
     input [31:0] EX_ALUout,             // ALU output from EX stage
     input [4:0] EX_Rw,                  // Write register number from EX stage
+    input [4:0] EX_Rt,                  // Source register Rt from EX stage (for sw forwarding)
     input EX_Zero,                      // Zero flag from EX stage
     input EX_Overflow,                  // Overflow flag from EX stage
     input EX_RegWr,                     // Register write enable from EX stage
@@ -23,6 +24,7 @@ module REG_EX_MEM (
     output reg [31:0] MEM_busB,         // Register B data to MEM stage
     output reg [31:0] MEM_ALUout,       // ALU output to MEM stage
     output reg [4:0] MEM_Rw,            // Write register number to MEM stage
+    output reg [4:0] MEM_Rt,            // Source register Rt to MEM stage (for sw forwarding)
     output reg MEM_Zero,                // Zero flag to MEM stage
     output reg MEM_Overflow,            // Overflow flag to MEM stage
     output reg MEM_RegWr,               // Register write enable to MEM stage
@@ -41,6 +43,7 @@ module REG_EX_MEM (
             MEM_busB    <= 32'h0;
             MEM_ALUout  <= 32'h0;
             MEM_Rw      <= 5'h0;
+            MEM_Rt      <= 5'h0;
             MEM_Zero    <= 1'b0;
             MEM_Overflow <= 1'b0;
             MEM_RegWr   <= 1'b0;
@@ -55,6 +58,7 @@ module REG_EX_MEM (
             MEM_busB    <= EX_busB;
             MEM_ALUout  <= EX_ALUout;
             MEM_Rw      <= EX_Rw;
+            MEM_Rt      <= EX_Rt;
             MEM_Zero    <= EX_Zero;
             MEM_Overflow <= EX_Overflow;
             MEM_RegWr   <= EX_RegWr;
