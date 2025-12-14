@@ -36,7 +36,13 @@ module STAGE_MEM (
 
     // MEM stage forwarding detection for store instructions
     wire mem_forward_busB;
-    assign mem_forward_busB = MEMin_MemWr && WR_RegWr && (WR_Rw == MEMin_Rt) && (WR_Rw != 5'b0);
+    DetUnit_MEM det_mem (
+        .M_Rt(MEMin_Rt),
+        .W_Rw(WR_Rw),
+        .W_RegWr(WR_RegWr),
+        .M_MemWr(MEMin_MemWr),
+        .forward_busB(mem_forward_busB)
+    );
 
     // Select data to write to memory: forwarded data from WB or original busB
     wire [31:0] DataIn_forward;

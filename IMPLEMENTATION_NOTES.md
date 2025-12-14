@@ -35,14 +35,20 @@ Added `EX_Rt` input and `MEM_Rt` output to pass the source register through the 
 #### 3. Modified `exp3/STAGE_MEM.v`
 Added forwarding logic in the MEM stage:
 - Added inputs: `MEMin_Rt`, `WR_RegDin`, `WR_Rw`, `WR_RegWr`
-- Added forwarding detection logic (inline, not using DetUnit_MEM module)
+- Instantiated `DetUnit_MEM` module for forwarding detection
 - Added multiplexer to select between `MEMin_busB` and `WR_RegDin`
 - DataRAM now uses `DataIn_forward` instead of `MEMin_busB`
 
 ```verilog
-// Forwarding detection
+// Forwarding detection using DetUnit_MEM
 wire mem_forward_busB;
-assign mem_forward_busB = MEMin_MemWr && WR_RegWr && (WR_Rw == MEMin_Rt) && (WR_Rw != 5'b0);
+DetUnit_MEM det_mem (
+    .M_Rt(MEMin_Rt),
+    .W_Rw(WR_Rw),
+    .W_RegWr(WR_RegWr),
+    .M_MemWr(MEMin_MemWr),
+    .forward_busB(mem_forward_busB)
+);
 
 // Data selection
 wire [31:0] DataIn_forward;
