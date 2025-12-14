@@ -100,6 +100,7 @@ module PPCPU (
   wire [31:0] MEM_busB;  // Register bus B passed to MEM stage
   wire [31:0] MEM_ALUout;  // ALU result passed to MEM stage
   wire [ 4:0] MEM_Rw;  // Register write address passed to MEM stage
+  wire [ 4:0] MEM_Rt;  // Source register Rt passed to MEM stage (for sw forwarding)
   wire        MEM_Overflow;  // ALU overflow flag passed to MEM stage
   wire        MEM_Zero;  // ALU zero flag passed to MEM stage   
   wire        MEM_RegWr;  // Register write enable passed to MEM stage
@@ -311,6 +312,7 @@ module PPCPU (
       .EX_busB(EXout_busB),
       .EX_ALUout(EXout_ALUout),
       .EX_Rw(EXout_Rw),
+      .EX_Rt(EX_Rt),  // Pass Rt to MEM stage for store instruction forwarding detection
       .EX_Zero(EXout_Zero),
       .EX_Overflow(EXout_Overflow),
       .EX_RegWr(EXout_RegWr),
@@ -323,6 +325,7 @@ module PPCPU (
       .MEM_busB(MEM_busB),
       .MEM_ALUout(MEM_ALUout),
       .MEM_Rw(MEM_Rw),
+      .MEM_Rt(MEM_Rt),  // Receive Rt from EX stage for store instruction forwarding detection
       .MEM_Zero(MEM_Zero),
       .MEM_Overflow(MEM_Overflow),
       .MEM_RegWr(MEM_RegWr),
@@ -340,6 +343,7 @@ module PPCPU (
       .MEMin_busB(MEM_busB),
       .MEMin_ALUout(MEM_ALUout),
       .MEMin_Rw(MEM_Rw),
+      .MEMin_Rt(MEM_Rt),  // Pass Rt to MEM stage for store instruction forwarding detection
       .MEMin_Zero(MEM_Zero),
       .MEMin_Overflow(MEM_Overflow),
       .MEMin_RegWr(MEM_RegWr),
@@ -347,6 +351,10 @@ module PPCPU (
       .MEMin_MemWr(MEM_MemWr),
       .MEMin_Branch(MEM_Branch),
       .MEMin_Jump(MEM_Jump),
+      // Forwarding inputs from WR stage
+      .WR_RegDin(WRout_RegDin),
+      .WR_Rw(WRout_Rw),
+      .WR_RegWr(WRout_RegWE),
       .MEMout_Dout(MEMout_Dout),
       .MEMout_ALUout(MEMout_ALUout),
       .MEMout_Btarg_or_Jtarg(MEMout_Btarg_or_Jtarg),
